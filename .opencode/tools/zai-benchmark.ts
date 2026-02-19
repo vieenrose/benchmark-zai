@@ -1,5 +1,6 @@
 import { tool } from "@opencode-ai/plugin"
 import path from "path"
+import { existsSync } from "fs"
 
 export default tool({
     description: "Run Z.AI model benchmark to measure TTFT, generation speed, and latency",
@@ -26,9 +27,22 @@ export default tool({
             .describe("Output format. Default: table"),
     },
     async execute(args, context) {
-        const venvPath = path.join(context.worktree, ".venv", "bin", "benchmark-zai")
+        // Try to find benchmark-zai in multiple locations
+        let cmd = "benchmark-zai"
+        const possiblePaths = [
+            path.join(context.worktree, ".venv", "bin", "benchmark-zai"),
+            path.join(context.directory, ".venv", "bin", "benchmark-zai"),
+            "/usr/local/bin/benchmark-zai",
+            path.join(process.env.HOME || "", ".local", "bin", "benchmark-zai"),
+        ]
         
-        let cmd = venvPath
+        for (const p of possiblePaths) {
+            if (existsSync(p)) {
+                cmd = p
+                break
+            }
+        }
+        
         const cmdArgs: string[] = []
         
         if (args.models) {
@@ -48,10 +62,14 @@ export default tool({
             const result = await Bun.$`${cmd} ${cmdArgs}`.text()
             return result
         } catch (error: any) {
-            if (error.message?.includes("API key")) {
-                return "Error: ZAI_API_KEY environment variable not set. Please set it before running benchmarks:\n\nexport ZAI_API_KEY=your_key"
+            const errorMsg = error.message || ""
+            if (errorMsg.includes("API key")) {
+                return "Error: ZAI_API_KEY environment variable not set.\n\nSet it with:\nexport ZAI_API_KEY=your_key"
             }
-            return `Error running benchmark: ${error.message}`
+            if (errorMsg.includes("not found") || errorMsg.includes("ENOENT")) {
+                return `Error: benchmark-zai not found.\n\nInstall it with:\ngit clone https://github.com/vieenrose/benchmark-zai.git\ncd benchmark-zai\npython -m venv .venv && source .venv/bin/activate\npip install -e ".[dev]"\n\nOr run from the benchmark-zai project directory.`
+            }
+            return `Error running benchmark: ${errorMsg}`
         }
     },
 })
