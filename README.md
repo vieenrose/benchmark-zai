@@ -119,6 +119,35 @@ This project includes built-in [OpenCode](https://opencode.ai) tools and skills 
 - **`zai-benchmark`** - Run Z.AI model benchmarks
 - **`zai-models`** - List available models
 
+### Install OpenCode Plugin
+
+**Option 1: Use in this project (automatic)**
+
+The plugin is automatically loaded when you run OpenCode in this repository:
+
+```bash
+cd benchmark-zai
+opencode
+```
+
+**Option 2: Install globally (use anywhere)**
+
+Copy the tools and skills to your global OpenCode config:
+
+```bash
+# Create directories
+mkdir -p ~/.config/opencode/tools ~/.config/opencode/skills/zai-benchmark
+
+# Copy tools
+cp .opencode/tools/zai-benchmark.ts ~/.config/opencode/tools/
+cp .opencode/tools/zai-models.ts ~/.config/opencode/tools/
+
+# Copy skill
+cp .opencode/skills/zai-benchmark/SKILL.md ~/.config/opencode/skills/zai-benchmark/
+```
+
+Now you can use `zai-benchmark` from any project.
+
 ### Usage in OpenCode
 
 ```
