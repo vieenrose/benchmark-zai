@@ -110,6 +110,34 @@ Based on benchmark results (3 runs each, 256 max tokens):
 | **Tokens** | Number of tokens generated |
 | **Success** | Successful runs / total runs |
 
+## OpenCode Integration
+
+This project includes built-in [OpenCode](https://opencode.ai) tools and skills for running benchmarks directly from your AI coding agent.
+
+### Available Tools
+
+- **`zai-benchmark`** - Run Z.AI model benchmarks
+- **`zai-models`** - List available models
+
+### Usage in OpenCode
+
+```
+# List available models
+Use zai-models to show me available Z.AI models
+
+# Run benchmark on all models
+Run zai-benchmark to benchmark all Z.AI models
+
+# Run benchmark on specific models
+Run zai-benchmark with models "glm-5,glm-4.7" for 5 runs
+```
+
+### Prerequisites
+
+```bash
+export ZAI_API_KEY=your_api_key
+```
+
 ## Development
 
 ```bash
